@@ -62,10 +62,10 @@ public class CashFlowHelper {
   };
 
   static {
-    PoolingHttpClientConnectionManager connManager =
-        new PoolingHttpClientConnectionManager(10, TimeUnit.MINUTES);
-    connManager.setDefaultMaxPerRoute(30);
-    connManager.setMaxTotal(60);
+//    PoolingHttpClientConnectionManager connManager =
+//        new PoolingHttpClientConnectionManager(10, TimeUnit.MINUTES);
+//    connManager.setDefaultMaxPerRoute(30);
+//    connManager.setMaxTotal(60);
     // connManager.getD
     client = HttpAsyncClients.custom().setKeepAliveStrategy(myStrategy).setMaxConnPerRoute(30)
         .setMaxConnTotal(50).setConnectionReuseStrategy(new ConnectionReuseStrategy() {
@@ -76,6 +76,7 @@ public class CashFlowHelper {
             return true;
           }
         }).build();
+    client.start();
     // .set
     // .setConnectionManager(connManager).build();
     // http = AlchemyHttp.newInstanceWithApacheHttpClient(client);
