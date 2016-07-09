@@ -1,0 +1,211 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<ReportDetail4 xmlns="http://www.decisionlogic.com/">
+	<RequestCode>4KY9KB</RequestCode>
+	<CustomerIdentifier></CustomerIdentifier>
+	<EmailAddress></EmailAddress>
+	<InstitutionName>Mariamman Indian Bank - Bank</InstitutionName>
+	<AccountName>Mariamman Indian Bank</AccountName>
+	<RoutingNumberEntered>061000052</RoutingNumberEntered>
+	<AccountType>CHECKING</AccountType>
+	<AccountNumberEntered>334041164401</AccountNumberEntered>
+	<AccountNumberFound>334041164401</AccountNumberFound>
+	<AccountNumberConfidence>4</AccountNumberConfidence>
+	<NameEntered>Bruce Willis</NameEntered>
+	<NameFound>BRUCE WILLIS</NameFound>
+	<NameConfidence>4</NameConfidence>
+	<AmountInput>0.0</AmountInput>
+	<AvailableBalance>351.81</AvailableBalance>
+	<AverageBalance>1441.3961797752795</AverageBalance>
+	<AverageBalanceRecent>1360.8306896551728</AverageBalanceRecent>
+	<IsLoginValid>true</IsLoginValid>
+	<IsVerified>true</IsVerified>
+	<AsOfDate>2015-07-15T18:45:37.05</AsOfDate>
+	<ActivityStartDate>2015-04-17T00:00:00</ActivityStartDate>
+	<ActivityEndDate>2015-07-14T00:00:00</ActivityEndDate>
+	<TotalCredits>20360.559999999998</TotalCredits>
+	<TotalDebits>-20540.41000000001</TotalDebits>
+	<CurrentBalance>434.79</CurrentBalance>
+	<IsActivityAvailable>true</IsActivityAvailable>
+	<TransactionAnalysisSummaries>
+		<TransactionAnalysisSummary4>
+			<TypeName>Payroll</TypeName>
+			<TypeCode>py</TypeCode>
+			<TotalCount>7</TotalCount>
+			<TotalAmount>7778.12</TotalAmount>
+			<RecentCount>2</RecentCount>
+			<RecentAmount>1787.86</RecentAmount>
+		</TransactionAnalysisSummary4>
+		<TransactionAnalysisSummary4>
+			<TypeName>Loan Debit</TypeName>
+			<TypeCode>ld</TypeCode>
+			<TotalCount>0</TotalCount>
+			<TotalAmount>0.0</TotalAmount>
+			<RecentCount>0</RecentCount>
+			<RecentAmount>0.0</RecentAmount>
+		</TransactionAnalysisSummary4>
+		<TransactionAnalysisSummary4>
+			<TypeName>Loan Credit</TypeName>
+			<TypeCode>lc</TypeCode>
+			<TotalCount>0</TotalCount>
+			<TotalAmount>0.0</TotalAmount>
+			<RecentCount>0</RecentCount>
+			<RecentAmount>0.0</RecentAmount>
+		</TransactionAnalysisSummary4>
+		<TransactionAnalysisSummary4>
+			<TypeName>Overdraft</TypeName>
+			<TypeCode>ov</TypeCode>
+			<TotalCount>0</TotalCount>
+			<TotalAmount>0.0</TotalAmount>
+			<RecentCount>0</RecentCount>
+			<RecentAmount>0.0</RecentAmount>
+		</TransactionAnalysisSummary4>
+		<TransactionAnalysisSummary4>
+			<TypeName>ACH Debit</TypeName>
+			<TypeCode>ad</TypeCode>
+			<TotalCount>0</TotalCount>
+			<TotalAmount>0.0</TotalAmount>
+			<RecentCount>0</RecentCount>
+			<RecentAmount>0.0</RecentAmount>
+		</TransactionAnalysisSummary4>
+		<TransactionAnalysisSummary4>
+			<TypeName>ACH Credit</TypeName>
+			<TypeCode>ac</TypeCode>
+			<TotalCount>0</TotalCount>
+			<TotalAmount>0.0</TotalAmount>
+			<RecentCount>0</RecentCount>
+			<RecentAmount>0.0</RecentAmount>
+		</TransactionAnalysisSummary4>
+		<TransactionAnalysisSummary4>
+			<TypeName>Deposit</TypeName>
+			<TypeCode>dp</TypeCode>
+			<TotalCount>19</TotalCount>
+			<TotalAmount>20360.559999999998</TotalAmount>
+			<RecentCount>3</RecentCount>
+			<RecentAmount>1938.86</RecentAmount>
+		</TransactionAnalysisSummary4>
+		<TransactionAnalysisSummary4>
+			<TypeName>Reversal</TypeName>
+			<TypeCode>rv</TypeCode>
+			<TotalCount>0</TotalCount>
+			<TotalAmount>0.0</TotalAmount>
+			<RecentCount>0</RecentCount>
+			<RecentAmount>0.0</RecentAmount>
+		</TransactionAnalysisSummary4>
+	</TransactionAnalysisSummaries>
+	<TransactionSummaries>
+		<TransactionSummary4>
+			<TransactionDate>2016-01-03T00:00:00</TransactionDate>
+			<Amount>-4000.00</Amount>
+			<RunningBalance>434.79</RunningBalance>
+			<Description>KEEP THE CHANGE TRANSFER TO ACCT 8293 FOR 07/14/15
+			</Description>
+			<TypeCodes></TypeCodes>
+			<IsRefresh>false</IsRefresh>
+			<Status>posted</Status>
+			<Category>Transfers</Category>
+		</TransactionSummary4>
+		<TransactionSummary4>
+			<TransactionDate>2016-01-01T00:00:00</TransactionDate>
+			<Amount>2000</Amount>
+			<RunningBalance>1313.4</RunningBalance>
+			<Description>DOMESTIC BIWEEKL DES:REG SALARY ID:xxxxx9700
+				INDN:WILLIS,BRUCE CO ID:1580</Description>
+			<TypeCodes>py,dp</TypeCodes>
+			<IsRefresh>false</IsRefresh>
+			<Status>posted</Status>
+			<Category>Paychecks/Salary</Category>
+		</TransactionSummary4>
+		<TransactionSummary4>
+			<TransactionDate>2016-01-01T00:00:00</TransactionDate>
+			<Amount>2160.00</Amount>
+			<RunningBalance>1713.4800000000002</RunningBalance>
+			<Description>Online Banking transfer from SAV 8293 Confirmation#
+				xxxxxx1422</Description>
+			<TypeCodes>dp</TypeCodes>
+			<IsRefresh>false</IsRefresh>
+			<Status>posted</Status>
+			<Category>Transfers</Category>
+		</TransactionSummary4>
+		<TransactionSummary4>
+			<TransactionDate>2015-12-03T00:00:00</TransactionDate>
+			<Amount>-4000.00</Amount>
+			<RunningBalance>1562.4800000000002</RunningBalance>
+			<Description>ESSENCE BEAUTY 07/03 #xxxxx1828 PURCHASE 634 COLLINS
+				HILL LAWRENCEVILLE GA</Description>
+			<TypeCodes></TypeCodes>
+			<IsRefresh>false</IsRefresh>
+			<Status>posted</Status>
+			<Category>Hobbies</Category>
+		</TransactionSummary4>
+		<TransactionSummary4>
+			<TransactionDate>2015-12-01T00:00:00</TransactionDate>
+			<Amount>2000</Amount>
+			<RunningBalance>2074.48</RunningBalance>
+			<Description>DOMESTIC BIWEEKL DES:REG SALARY ID:xxxxx9700
+				INDN:WILLIS,BRUCE CO ID:1580</Description>
+			<TypeCodes>py,dp</TypeCodes>
+			<IsRefresh>false</IsRefresh>
+			<Status>posted</Status>
+			<Category>Paychecks/Salary</Category>
+		</TransactionSummary4>
+		<TransactionSummary4>
+			<TransactionDate>2015-12-01T00:00:00</TransactionDate>
+			<Amount>2060.00</Amount>
+			<RunningBalance>1713.4800000000002</RunningBalance>
+			<Description>Online Banking transfer from SAV 8293 Confirmation#
+				xxxxxx1422</Description>
+			<TypeCodes>dp</TypeCodes>
+			<IsRefresh>false</IsRefresh>
+			<Status>posted</Status>
+			<Category>Transfers</Category>
+		</TransactionSummary4>
+		<TransactionSummary4>
+			<TransactionDate>2015-11-03T00:00:00</TransactionDate>
+			<Amount>-4065.00</Amount>
+			<RunningBalance>434.79</RunningBalance>
+			<Description>KEEP THE CHANGE TRANSFER TO ACCT 8293 FOR 07/14/15
+			</Description>
+			<TypeCodes></TypeCodes>
+			<IsRefresh>false</IsRefresh>
+			<Status>posted</Status>
+			<Category>Transfers</Category>
+		</TransactionSummary4>
+		<TransactionSummary4>
+			<TransactionDate>2015-11-01T00:00:00</TransactionDate>
+			<Amount>2000</Amount>
+			<RunningBalance>1313.4</RunningBalance>
+			<Description>DOMESTIC BIWEEKL DES:REG SALARY ID:xxxxx9700
+				INDN:WILLIS,BRUCE CO ID:1580</Description>
+			<TypeCodes>py,dp</TypeCodes>
+			<IsRefresh>false</IsRefresh>
+			<Status>posted</Status>
+			<Category>Paychecks/Salary</Category>
+		</TransactionSummary4>
+		<TransactionSummary4>
+			<TransactionDate>2015-11-01T00:00:00</TransactionDate>
+			<Amount>2160.00</Amount>
+			<RunningBalance>1713.4800000000002</RunningBalance>
+			<Description>Online Banking transfer from SAV 8293 Confirmation#
+				xxxxxx1422</Description>
+			<TypeCodes>dp</TypeCodes>
+			<IsRefresh>false</IsRefresh>
+			<Status>posted</Status>
+			<Category>Transfers</Category>
+		</TransactionSummary4>
+	</TransactionSummaries>
+	<ProcessedStatus>1</ProcessedStatus>
+	<IsStarted>true</IsStarted>
+	<IsCompleted>true</IsCompleted>
+	<Notes>&lt;ul style="margin-top: 3px; margin-bottom:
+		0px;"&gt;&lt;li&gt;&lt;strong&gt;Transactions&lt;/strong&gt; : 90-days
+		of transactions returned&lt;/li&gt;&lt;/ul&gt;</Notes>
+	<Status>3</Status>
+	<StatusText>Login, Verified</StatusText>
+	<StatusCodeColor>#228822</StatusCodeColor>
+	<LastRefreshErrorMessage>Login Error</LastRefreshErrorMessage>
+	<IsError>false</IsError>
+	<ErrorMessage></ErrorMessage>
+	<IsACHSupported>true</IsACHSupported>
+	<AccountExpenses />
+	<ChartsId>6949328</ChartsId>
+</ReportDetail4>
