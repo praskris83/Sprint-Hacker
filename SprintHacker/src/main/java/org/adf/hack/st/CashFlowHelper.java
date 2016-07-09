@@ -5,16 +5,21 @@ package org.adf.hack.st;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.StringWriter;
+import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import org.adf.cashflow.CashFlow;
 import org.adf.cashflow.CashFlowResult;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.conn.ConnectionKeepAliveStrategy;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -29,8 +34,6 @@ import com.ximpleware.PilotException;
 import com.ximpleware.VTDGen;
 import com.ximpleware.VTDNav;
 
-import tech.sirwellington.alchemy.http.AlchemyHttp;
-
 /**
  * @author Prasad
  *
@@ -43,7 +46,9 @@ public class CashFlowHelper {
 
   private static final String BANK_NAME_KEY = "bankName";
 
-  static AlchemyHttp http;
+  // static AlchemyHttp http;
+
+  static CloseableHttpClient client;
 
   static ExecutorService ex = Executors.newWorkStealingPool(10);
 
@@ -55,12 +60,15 @@ public class CashFlowHelper {
   };
 
   static {
-    PoolingHttpClientConnectionManager connManager = new PoolingHttpClientConnectionManager();
+    PoolingHttpClientConnectionManager connManager =
+        new PoolingHttpClientConnectionManager(10, TimeUnit.MINUTES);
     connManager.setDefaultMaxPerRoute(30);
-    connManager.setMaxTotal(40);
-    CloseableHttpClient client = HttpClients.custom().setKeepAliveStrategy(myStrategy)
+    connManager.setMaxTotal(60);
+    // connManager.getD
+    client = HttpClients.custom()
+        // .setKeepAliveStrategy(myStrategy)
         .setConnectionManager(connManager).build();
-    http = AlchemyHttp.newInstanceWithApacheHttpClient(client);
+    // http = AlchemyHttp.newInstanceWithApacheHttpClient(client);
   }
 
   // private CashFlow cashFlow;
@@ -75,7 +83,7 @@ public class CashFlowHelper {
 
   public static void process(CashFlow cfEntity, CashFlowResult result, CountDownLatch latch)
       throws Exception {
-//    DateTime dt = DateTime.now();
+    // DateTime dt = DateTime.now();
     result.setKey(cfEntity.getId());
     // String file = "D:\\ADF\\workspace\\derewrite\\SprintHacker\\" + "test5.xml";
     String file = cfEntity.getFile();
@@ -85,14 +93,14 @@ public class CashFlowHelper {
     byte[] readFileToByteArray = new byte[(int) f.length()];
     fis.read(readFileToByteArray);
     fis.close();
-//    vg.setDoc(FileUtils.readFileToByteArray(f));
+    // vg.setDoc(FileUtils.readFileToByteArray(f));
     vg.setDoc(readFileToByteArray);
     vg.parse(false);
     VTDNav vn = vg.getNav();
     AutoPilot ap = new AutoPilot(vn);
     result.setCashFlow(getCashFlowVal(vn, ap));
     result.setBankName(getBankName(getRoutingNumber(vn, ap)));
-//    System.out.println("XML Parsing 1 ==" + (DateTime.now().getMillis() - dt.getMillis()));
+    // System.out.println("XML Parsing 1 ==" + (DateTime.now().getMillis() - dt.getMillis()));
     // ex.submit(new Runnable() {
     // @Override
     // public void run() {
@@ -152,8 +160,13 @@ public class CashFlowHelper {
   public static String getBankName(String routingNum) throws Exception {
     DateTime dt = DateTime.now();
     // String resp = simulate();
-    String resp = http.go().get().expecting(String.class).at(BANK_SERVICE + routingNum);
-    Map<String, String> bankData = mapper.readValue(resp, Map.class);
+    // String resp = http.go().get().expecting(String.class).at(BANK_SERVICE + routingNum);
+    HttpGet getRequest = new HttpGet(BANK_SERVICE + routingNum);
+    // StringWriter writer = new StringWriter();
+    // String resp =
+    // IOUtils.toString(client.execute(getRequest).getEntity().getContent(),Charset.defaultCharset());
+    Map<String, String> bankData = mapper.readValue(client.execute(getRequest).getEntity().getContent(), Map.class);
+    // Map<String, String> bankData = mapper.readValue(resp, Map.class);
     String bankName = bankData.get(BANK_NAME_KEY);
     // String resp = http.go().get().at(BANK_SERVICE +
     // routingNum).body().getAsJsonObject().get(BANK_NAME_KEY).getAsString();
