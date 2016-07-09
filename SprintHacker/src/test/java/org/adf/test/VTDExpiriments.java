@@ -5,6 +5,7 @@ package org.adf.test;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.nio.charset.Charset;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -22,7 +23,7 @@ import com.ximpleware.VTDNav;
  */
 public class VTDExpiriments implements Runnable {
 
-  String file = "D:\\ADF\\workspace\\derewrite\\SprintHacker\\" + "test" + ".xml";
+  String file = "C:\\Users\\prasad\\github\\SprintHacker\\test5.xml";
 
   @Override
   public void run() {
@@ -35,26 +36,40 @@ public class VTDExpiriments implements Runnable {
 //      Path path = Paths.get(file);
 //      byte[] readFileToByteArray = Files.readAllBytes(path);
 //      byte[] readFileToByteArray = com.google.common.io.Files.toByteArray(f);
-      FileInputStream fis = new FileInputStream(f);
-      byte[] readFileToByteArray = new byte[(int) f.length()];
-      fis.read(readFileToByteArray);
-      fis.close();
-      System.out.println("File Read == " + (DateTime.now().getMillis() - dt.getMillis()));
+//      FileUtils.readFileToString(f);
+//      FileInputStream fis = new FileInputStream(f);
+//      byte[] readFileToByteArray = new byte[(int) f.length()];
+//      fis.read(readFileToByteArray);
+//      fis.close();
+      byte[] readFileToByteArray = (FileUtils.readFileToString(f, Charset.defaultCharset())).getBytes();
+      System.out.println("2 " + (DateTime.now().getMillis() - dt.getMillis()));
+      dt = DateTime.now();
       vg.setDoc(readFileToByteArray);
+      System.out.println("3 " + (DateTime.now().getMillis() - dt.getMillis()));
       dt = DateTime.now();
       vg.parse(false);
+      System.out.println("4 " + (DateTime.now().getMillis() - dt.getMillis()));
+      dt = DateTime.now();
       VTDNav vn = vg.getNav();
+      System.out.println("5 " + (DateTime.now().getMillis() - dt.getMillis()));
+      dt = DateTime.now();
       AutoPilot ap = new AutoPilot(vn);
+      System.out.println("6 " + (DateTime.now().getMillis() - dt.getMillis()));
+//      System.out.println("5 " + (DateTime.now().getMillis() - dt.getMillis()));
+      String routingNumber = getRoutingNumber(vn, ap);
+      vn.toElement(VTDNav.ROOT);
       int amt = getCashFlowVal(vn, ap);
 //      vn = vg.getNav();
 //      ap = new AutoPilot(vn);
-      vn = vn.duplicateNav();
-      ap.bind(vn);
+//      vn = vn.duplicateNav();
+//      System.out.println("7 " + (DateTime.now().getMillis() - dt.getMillis()));
+//      dt = DateTime.now();
+//      ap.bind(vn);
+//      System.out.println("8 " + (DateTime.now().getMillis() - dt.getMillis()));
 //      ap.resetXPath();
-      String routingNumber = getRoutingNumber(vn, ap);
 //      System.out.println(routingNumber);
 //      System.out.println(amt);
-      System.out.println(DateTime.now().getMillis() - dt.getMillis());
+      System.out.println("Total time in ms  " + (DateTime.now().getMillis() - dt.getMillis()));
     } catch (Exception e) {
       e.printStackTrace();
     }finally {
@@ -69,7 +84,8 @@ public class VTDExpiriments implements Runnable {
         int t = vn.getText();
         if (t != -1) {
           String val = vn.toNormalizedString(t);
-          // System.out.println(" Routing Num ==> "+val);
+           System.out.println(" Routing Num ==> "+val);
+//          System.out.println("9 " + (DateTime.now().getMillis() - dt.getMillis()));
           return val;
         }
       }
@@ -94,7 +110,9 @@ public class VTDExpiriments implements Runnable {
         cashFlow = cashFlow + NumberUtils.toDouble(val);
       }
     }
+//    System.out.println("6 " + (DateTime.now().getMillis() - dt.getMillis()));
     int amt = (int) Math.ceil(cashFlow);
+//    System.out.println("7 " + (DateTime.now().getMillis() - dt.getMillis()));
     return amt;
   }
 

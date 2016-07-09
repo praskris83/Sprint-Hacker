@@ -106,48 +106,68 @@ public class CashFlowHelper {
   // this.cashFlowResult = cashFlowResult;
   // }
 
-  public static void process(CashFlow cfEntity, CashFlowResult result) throws Exception {
-    DateTime dt = DateTime.now();
-    CountDownLatch latch = new CountDownLatch(1);
-    // result.setKey(cfEntity.getId());
+  // public static void process(CashFlow cfEntity, CashFlowResult result,VTDGen vg) throws Exception
+  // {
+  // CountDownLatch latch = new CountDownLatch(1);
+  // // result.setKey(cfEntity.getId());
+  // Runnable task = new Runnable() {
+  // @Override
+  // public void run() {
+  // parseXml(cfEntity, result,vg);
+  // latch.countDown();
+  // }
+  // };
+  // Thread t = new Thread(task);
+  // t.setPriority(Thread.MAX_PRIORITY);
+  //// t.start();
+  // ex.submit(task);
+  // latch.await();
+  // setBankNameAsync(result);
+  // // setBankName(result, routingNumber);
+  // }
+
+  public static void parseXml(CashFlow cfEntity, CashFlowResult result, VTDGen vg,
+      CountDownLatch pasre) {
+    // String file = "D:\\ADF\\workspace\\derewrite\\SprintHacker\\" + "test5.xml";
     Runnable task = new Runnable() {
       @Override
       public void run() {
-        setCashflow(cfEntity, result, dt);
-        latch.countDown();
+        try {
+          DateTime dt = DateTime.now();
+          setXMLDetails(result, vg);
+          System.out.println("File Pars Time for " + Thread.currentThread().getName() + " -- " +
+          (DateTime.now().getMillis() - dt.getMillis()));
+        } catch (Exception e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        } finally {
+          pasre.countDown();
+        }
       }
     };
-//    Thread t = new Thread(task);
-//    t.setPriority(Thread.MAX_PRIORITY);
-//    t.start();
     ex.submit(task);
-    latch.await();
-    setBankNameAsync(result);
-    // setBankName(result, routingNumber);
   }
 
-  protected static void setCashflow(CashFlow cfEntity, CashFlowResult result, DateTime dt) {
-    // String file = "D:\\ADF\\workspace\\derewrite\\SprintHacker\\" + "test5.xml";
-    try {
-      String file = cfEntity.getFile();
-      VTDGen vg = new VTDGen();
-      File f = new File(file);
-      FileInputStream fis = new FileInputStream(f);
-      byte[] readFileToByteArray = new byte[(int) f.length()];
-      fis.read(readFileToByteArray);
-      fis.close();
-      // vg.setDoc(FileUtils.readFileToByteArray(f));
-      vg.setDoc(readFileToByteArray);
-      vg.parse(false);
-      VTDNav vn = vg.getNav();
-      AutoPilot ap = new AutoPilot(vn);
-      result.setCashFlow(getCashFlowVal(vn, ap));
-      result.setRouting(getRoutingNumber(vn, ap));
-      System.out.println("XML Parsing 1 ==" + Thread.currentThread().getName() + " -- "
-          + (DateTime.now().getMillis() - dt.getMillis()) + " " +DateTime.now().getMillisOfDay());      
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
+  protected static void setXMLDetails(CashFlowResult result, VTDGen vg)
+      throws PilotException, NavException {
+    VTDNav vn = vg.getNav();
+    AutoPilot ap = new AutoPilot(vn);
+    result.setCashFlow(getCashFlowVal(vn, ap));
+    vn.toElement(VTDNav.ROOT);
+    result.setRouting(getRoutingNumber(vn, ap));
+  }
+
+  protected static void read(CashFlow cfEntity, VTDGen vg) throws FileNotFoundException,
+      IOException, EncodingException, EOFException, EntityException, ParseException {
+    String file = cfEntity.getFile();
+    File f = new File(file);
+    FileInputStream fis = new FileInputStream(f);
+    byte[] readFileToByteArray = new byte[(int) f.length()];
+    fis.read(readFileToByteArray);
+    fis.close();
+    // vg.setDoc(FileUtils.readFileToByteArray(f));
+    vg.setDoc(readFileToByteArray);
+    vg.parse(false);
   }
 
   public static int getCashFlowVal(VTDNav vn, AutoPilot ap) throws PilotException, NavException {
@@ -169,13 +189,12 @@ public class CashFlowHelper {
   public static String getRoutingNumber(VTDNav vn, AutoPilot ap) {
     // DateTime dt = DateTime.now();
     try {
-      vn.toElement(VTDNav.ROOT);
       ap.selectElement("RoutingNumberEntered");
       while (ap.iterate()) {
         int t = vn.getText();
         if (t != -1) {
           String val = vn.toNormalizedString(t);
-//          System.out.println(" Routing Num ==> " + val);
+          // System.out.println(" Routing Num ==> " + val);
           return val;
         }
       }
@@ -190,23 +209,19 @@ public class CashFlowHelper {
     return null;
   }
 
-  public static void setBankNameAsync(CashFlowResult result) throws Exception {
+  public static void setBankNameAsync(CashFlowResult result, CountDownLatch latch) throws Exception {
     DateTime dt = DateTime.now();
-    CountDownLatch latch = new CountDownLatch(1);
     HttpGet getRequest = new HttpGet(BANK_SERVICE + result.getRouting());
-    final CountDownLatch latch1 = new CountDownLatch(1);
     client.execute(getRequest, new FutureCallback<HttpResponse>() {
-      final String bankName = "";
-
       public void completed(final HttpResponse execute) {
         Map<String, String> bankData;
         try {
           bankData = mapper.readValue(execute.getEntity().getContent(), Map.class);
           result.setBankName(bankData.get(BANK_NAME_KEY));
+          System.out.println("Bank Srvc Time for " + Thread.currentThread().getName() + " -- " +
+          (DateTime.now().getMillis() - dt.getMillis()));
           // execute.close();
-          latch1.countDown();
         } catch (Exception e) {
-          // TODO Auto-generated catch block
           e.printStackTrace();
         } finally {
           latch.countDown();
@@ -214,16 +229,14 @@ public class CashFlowHelper {
       }
 
       public void failed(final Exception ex) {
-        latch1.countDown();
+        latch.countDown();
       }
 
       public void cancelled() {
-        latch1.countDown();
+        latch.countDown();
       }
 
     });
-    System.out.println("Bank Service == " + Thread.currentThread().getName() + " -- "
-        + (DateTime.now().getMillis() - dt.getMillis()) + " " + DateTime.now().getMillisOfDay());
   }
 
   public static void setBankName(CashFlowResult result, String routingNum) throws Exception {
@@ -267,5 +280,26 @@ public class CashFlowHelper {
     } catch (Exception e) {
       e.printStackTrace();
     }
+  }
+
+  public static void initParser(CashFlow cfEntity, CashFlowResult cashFlowResult,
+      CountDownLatch latch, VTDGen vg) {
+    Runnable task = new Runnable() {
+      @Override
+      public void run() {
+        try {
+          DateTime dt = DateTime.now();
+          read(cfEntity, vg);
+          System.out.println("File Read Time for " + Thread.currentThread().getName() + " -- " +
+          (DateTime.now().getMillis() - dt.getMillis()));
+        } catch (Exception e) {
+          // TODO Auto-generated catch block
+          e.printStackTrace();
+        } finally {
+          latch.countDown();
+        }
+      }
+    };
+    ex.submit(task);
   }
 }

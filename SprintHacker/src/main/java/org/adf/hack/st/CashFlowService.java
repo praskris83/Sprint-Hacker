@@ -5,7 +5,6 @@ package org.adf.hack.st;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -49,7 +48,7 @@ public class CashFlowService {
 //    List<CashFlow> cashflows = new LinkedList<CashFlow>();
 //    System.out.println("IN == " + DateTime.now());
 //    DateTime dt = DateTime.now();
-    System.out.println("                dt" + Thread.currentThread().getName() + " --  " + DateTime.now().getMillisOfDay());
+    System.out.println("                dt " + Thread.currentThread().getName() + " --  " + DateTime.now().getMillisOfDay());
     String[] split = key.split(",");
     List<String> asList = Arrays.asList(split);
     List<CashFlow> cashflows = dbHelper.findAll(asList);
@@ -61,36 +60,8 @@ public class CashFlowService {
     for (CashFlow cashflow : cashflows) {
       CashFlowResult result = new CashFlowResult(cashflow.getId(),cashflow,latch);
       results.add(result);
-//      Runnable task = new Runnable() {
-//        @Override
-//        public void run() {
-//          try {
-//            CashFlowHelper.process(cashflow, result,latch);
-//          } catch (Exception e) {
-//            e.printStackTrace();
-//          } finally {
-//            latch.countDown();
-//          }
-////          System.out.println("Task Done1 -- " + (DateTime.now().getMillis() - dt.getMillis()) + Thread.currentThread().getName());
-//        }
-//      };
       ex.submit(result);
-//      ex.submit(new Runnable() {
-//        @Override
-//        public void run() {
-//          DateTime dt = DateTime.now();
-//          try {
-//            CashFlowHelper.getRoutingNumber(cashflow, result,latch);
-//          } catch (Exception e) {
-//            e.printStackTrace();
-//          } finally {
-//            latch.countDown();
-//          }
-//          System.out.println("Task Done2 -- " + (DateTime.now().getMillis() - dt.getMillis()));
-//        }
-//      });
     }
-//    ex.invokeAll(results);
     try {
       latch.await();
       // dbHelper.save(cashflows);

@@ -9,6 +9,7 @@ import org.adf.hack.st.CashFlowHelper;
 import org.joda.time.DateTime;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.ximpleware.VTDGen;
 
 /**
  * @author Prasad
@@ -92,7 +93,16 @@ public class CashFlowResult implements Runnable {
   @Override
   public void run() {
     try {
-      CashFlowHelper.process(entity, this);
+      CountDownLatch fileRead = new CountDownLatch(1);
+      VTDGen vg = new VTDGen();
+      CashFlowHelper.initParser(entity, this,fileRead,vg);
+      fileRead.await();
+      CountDownLatch pasre = new CountDownLatch(1);
+      CashFlowHelper.parseXml(entity, this, vg,pasre);
+      pasre.await();
+      CountDownLatch service = new CountDownLatch(1);
+      CashFlowHelper.setBankNameAsync(this,service);
+      service.await();
       System.out.println("              ts" + Thread.currentThread().getName() + " --  " + DateTime.now().getMillisOfDay());
     } catch (Exception e) {
       e.printStackTrace();
