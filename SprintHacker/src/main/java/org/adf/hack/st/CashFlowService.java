@@ -30,8 +30,6 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 public class CashFlowService {
-
-  ExecutorService ex = Executors.newFixedThreadPool(10);
   
   ExecutorService ex1 = Executors.newFixedThreadPool(10);
 
@@ -57,13 +55,13 @@ public class CashFlowService {
     List<CashFlowResult> results = new ArrayList<CashFlowResult>();
 //    System.out.println("DB Fetch" + (DateTime.now().getMillis() - dt.getMillis()));
     CountDownLatch latch = new CountDownLatch(cashflows.size()*1);
+    ExecutorService ex = Executors.newFixedThreadPool(cashflows.size()*1);
     for (CashFlow cashflow : cashflows) {
       CashFlowResult result = new CashFlowResult();
       results.add(result);
       ex.submit(new Runnable() {
         @Override
         public void run() {
-          DateTime dt = DateTime.now();
           try {
             CashFlowHelper.process(cashflow, result,latch);
           } catch (Exception e) {
@@ -71,7 +69,7 @@ public class CashFlowService {
           } finally {
             latch.countDown();
           }
-//          System.out.println("Task Done1 -- " + (DateTime.now().getMillis() - dt.getMillis()));
+          System.out.println("Task Done1 -- " + (DateTime.now().getMillis() - dt.getMillis()) + Thread.currentThread().getName());
         }
       });
 //      ex.submit(new Runnable() {
