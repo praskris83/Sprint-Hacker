@@ -62,7 +62,7 @@ public class CashFlowHelper {
 
   static HttpClient sync;
 
-  static ExecutorService ex = Executors.newFixedThreadPool(10);
+  static ExecutorService ex = Executors.newFixedThreadPool(20);
 
   static ConnectionKeepAliveStrategy myStrategy = new ConnectionKeepAliveStrategy() {
     @Override
@@ -127,7 +127,7 @@ public class CashFlowHelper {
   // }
 
   public static void parseXml(CashFlow cfEntity, CashFlowResult result, VTDGen vg,
-      CountDownLatch pasre) {
+      CountDownLatch latch) {
     // String file = "D:\\ADF\\workspace\\derewrite\\SprintHacker\\" + "test5.xml";
     Runnable task = new Runnable() {
       @Override
@@ -135,13 +135,13 @@ public class CashFlowHelper {
         try {
           DateTime dt = DateTime.now();
           setXMLDetails(result, vg);
-          System.out.println("File Pars Time for " + Thread.currentThread().getName() + " -- " +
+          System.out.println("XML  Pars Time for " + Thread.currentThread().getName() + " -- " +
           (DateTime.now().getMillis() - dt.getMillis()));
         } catch (Exception e) {
           // TODO Auto-generated catch block
           e.printStackTrace();
         } finally {
-          pasre.countDown();
+          latch.countDown();
         }
       }
     };
@@ -151,10 +151,9 @@ public class CashFlowHelper {
   protected static void setXMLDetails(CashFlowResult result, VTDGen vg)
       throws PilotException, NavException {
     VTDNav vn = vg.getNav();
+    vn.toElement(VTDNav.ROOT);
     AutoPilot ap = new AutoPilot(vn);
     result.setCashFlow(getCashFlowVal(vn, ap));
-    vn.toElement(VTDNav.ROOT);
-    result.setRouting(getRoutingNumber(vn, ap));
   }
 
   protected static void read(CashFlow cfEntity, VTDGen vg) throws FileNotFoundException,
@@ -186,10 +185,11 @@ public class CashFlowHelper {
     return amt;
   }
 
-  public static String getRoutingNumber(VTDNav vn, AutoPilot ap) {
+  public static String getRoutingNumber(VTDNav vn) {
     // DateTime dt = DateTime.now();
     try {
-      ap.selectElement("RoutingNumberEntered");
+      AutoPilot ap = new AutoPilot(vn);
+      ap .selectElement("RoutingNumberEntered");
       while (ap.iterate()) {
         int t = vn.getText();
         if (t != -1) {
@@ -235,7 +235,6 @@ public class CashFlowHelper {
       public void cancelled() {
         latch.countDown();
       }
-
     });
   }
 
@@ -273,8 +272,8 @@ public class CashFlowHelper {
       vg.setDoc(FileUtils.readFileToByteArray(f));
       vg.parse(false);
       VTDNav vn = vg.getNav();
-      AutoPilot ap = new AutoPilot(vn);
-      String routingNumber = getRoutingNumber(vn, ap);
+//      AutoPilot ap = new AutoPilot(vn);
+      String routingNumber = getRoutingNumber(vn);
       // result.setBankName(getBankName(routingNumber));
       // System.out.println("XML Parsing 2 ==" + (DateTime.now().getMillis() - dt.getMillis()));
     } catch (Exception e) {
@@ -290,6 +289,7 @@ public class CashFlowHelper {
         try {
           DateTime dt = DateTime.now();
           read(cfEntity, vg);
+          cashFlowResult.setRouting(getRoutingNumber(vg.getNav()));
           System.out.println("File Read Time for " + Thread.currentThread().getName() + " -- " +
           (DateTime.now().getMillis() - dt.getMillis()));
         } catch (Exception e) {

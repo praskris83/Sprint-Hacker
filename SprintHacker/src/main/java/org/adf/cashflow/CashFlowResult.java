@@ -97,12 +97,12 @@ public class CashFlowResult implements Runnable {
       VTDGen vg = new VTDGen();
       CashFlowHelper.initParser(entity, this,fileRead,vg);
       fileRead.await();
-      CountDownLatch pasre = new CountDownLatch(1);
-      CashFlowHelper.parseXml(entity, this, vg,pasre);
-      pasre.await();
-      CountDownLatch service = new CountDownLatch(1);
-      CashFlowHelper.setBankNameAsync(this,service);
-      service.await();
+      CountDownLatch latch = new CountDownLatch(2);
+      CashFlowHelper.setBankNameAsync(this,latch);
+      CashFlowHelper.parseXml(entity, this, vg,latch);
+      latch.await();
+//      CountDownLatch service = new CountDownLatch(1);
+//      service.await();
       System.out.println("              ts" + Thread.currentThread().getName() + " --  " + DateTime.now().getMillisOfDay());
     } catch (Exception e) {
       e.printStackTrace();
