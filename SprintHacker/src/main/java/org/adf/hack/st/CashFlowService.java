@@ -48,7 +48,7 @@ public class CashFlowService {
       @RequestParam(value = "key", defaultValue = "test") String key) {
 //    List<CashFlow> cashflows = new LinkedList<CashFlow>();
 //    System.out.println("IN == " + DateTime.now());
-    DateTime dt = DateTime.now();
+//    DateTime dt = DateTime.now();
     String[] split = key.split(",");
     List<String> asList = Arrays.asList(split);
     List<CashFlow> cashflows = dbHelper.findAll(asList);
@@ -69,7 +69,7 @@ public class CashFlowService {
           } finally {
             latch.countDown();
           }
-          System.out.println("Task Done1 -- " + (DateTime.now().getMillis() - dt.getMillis()) + Thread.currentThread().getName());
+//          System.out.println("Task Done1 -- " + (DateTime.now().getMillis() - dt.getMillis()) + Thread.currentThread().getName());
         }
       });
 //      ex.submit(new Runnable() {
@@ -103,7 +103,7 @@ public class CashFlowService {
       // TODO Auto-generated catch block
       e.printStackTrace();
     }
-    System.out.println("Total S+ervice Time" + (DateTime.now().getMillis() - dt.getMillis()));
+//    System.out.println("Total S+ervice Time" + (DateTime.now().getMillis() - dt.getMillis()));
 //    System.out.println("OUT == " + DateTime.now());
     return results;
   }
