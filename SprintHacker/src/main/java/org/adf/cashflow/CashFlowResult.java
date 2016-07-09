@@ -99,6 +99,7 @@ public class CashFlowResult implements Runnable {
 //      CashFlowHelper.initParser(entity, this,fileRead,vn);
 //      fileRead.await();
       VTDNav vn = CashFlowHelper.read(entity);
+      setRouting(CashFlowHelper.getRoutingNumber(vn));
       CountDownLatch latch = new CountDownLatch(2);
       CashFlowHelper.setBankNameAsync(this,latch);
       CashFlowHelper.parseXml(entity, this, vn,latch);

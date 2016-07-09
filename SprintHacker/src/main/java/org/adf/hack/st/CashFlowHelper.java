@@ -86,7 +86,7 @@ public class CashFlowHelper {
       }
     };
     client = HttpAsyncClients.custom().setKeepAliveStrategy(myStrategy).setMaxConnPerRoute(30)
-        .setMaxConnTotal(50).setConnectionReuseStrategy(reuseStrategy).setConnectionManagerShared(true)
+        .setMaxConnTotal(50).setConnectionReuseStrategy(reuseStrategy)
         .build();
     client.start();
 //    sync = HttpClientBuilder.create().setConnectionManager(connManager)
@@ -159,6 +159,7 @@ public class CashFlowHelper {
 
   public static VTDNav read(CashFlow cfEntity) throws FileNotFoundException,
       IOException, EncodingException, EOFException, EntityException, ParseException {
+    DateTime dt = DateTime.now();
     String file = cfEntity.getFile();
     File f = new File(file);
     FileInputStream fis = new FileInputStream(f);
@@ -170,6 +171,8 @@ public class CashFlowHelper {
     vg.setDoc(readFileToByteArray);
     vg.parse(false);
     VTDNav vn = vg.getNav();
+    System.out.println("File Read Time for " + Thread.currentThread().getName() + " -- " +
+        (DateTime.now().getMillis() - dt.getMillis()));
     return vn;
   }
 
