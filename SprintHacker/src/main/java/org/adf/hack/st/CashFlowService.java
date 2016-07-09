@@ -56,22 +56,24 @@ public class CashFlowService {
 //    System.out.println("DB Fetch" + (DateTime.now().getMillis() - dt.getMillis()));
     CountDownLatch latch = new CountDownLatch(cashflows.size()*1);
     ExecutorService ex = Executors.newFixedThreadPool(cashflows.size()*1);
+
     for (CashFlow cashflow : cashflows) {
-      CashFlowResult result = new CashFlowResult();
+      CashFlowResult result = new CashFlowResult(cashflow.getId(),cashflow,latch);
       results.add(result);
-      ex.submit(new Runnable() {
-        @Override
-        public void run() {
-          try {
-            CashFlowHelper.process(cashflow, result,latch);
-          } catch (Exception e) {
-            e.printStackTrace();
-          } finally {
-            latch.countDown();
-          }
-//          System.out.println("Task Done1 -- " + (DateTime.now().getMillis() - dt.getMillis()) + Thread.currentThread().getName());
-        }
-      });
+//      Runnable task = new Runnable() {
+//        @Override
+//        public void run() {
+//          try {
+//            CashFlowHelper.process(cashflow, result,latch);
+//          } catch (Exception e) {
+//            e.printStackTrace();
+//          } finally {
+//            latch.countDown();
+//          }
+////          System.out.println("Task Done1 -- " + (DateTime.now().getMillis() - dt.getMillis()) + Thread.currentThread().getName());
+//        }
+//      };
+      ex.submit(result);
 //      ex.submit(new Runnable() {
 //        @Override
 //        public void run() {
@@ -87,6 +89,7 @@ public class CashFlowService {
 //        }
 //      });
     }
+//    ex.invokeAll(results);
     try {
       latch.await();
       // dbHelper.save(cashflows);

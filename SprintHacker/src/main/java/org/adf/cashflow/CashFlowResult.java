@@ -3,22 +3,37 @@
  */
 package org.adf.cashflow;
 
+import java.util.concurrent.CountDownLatch;
+
+import org.adf.hack.st.CashFlowHelper;
+
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 /**
  * @author Prasad
  *
  */
-public class CashFlowResult {
+public class CashFlowResult implements Runnable {
 
   String key;
-  
+
   int cashFlow;
-  
+
   String bankName;
-  
+
   @JsonIgnore
   CashFlow entity;
+
+  @JsonIgnore
+  CountDownLatch latch;
+
+
+  public CashFlowResult(String key, CashFlow entity, CountDownLatch latch) {
+    super();
+    this.key = key;
+    this.entity = entity;
+    this.latch = latch;
+  }
 
   public CashFlowResult(String key) {
     super();
@@ -61,6 +76,16 @@ public class CashFlowResult {
   public void setEntity(CashFlow entity) {
     this.entity = entity;
   }
-    
-  
+
+  @Override
+  public void run() {
+    try {
+      CashFlowHelper.process(entity, this, latch);
+    } catch (Exception e) {
+      e.printStackTrace();
+    } finally {
+      latch.countDown();
+    }
+  }
+
 }
