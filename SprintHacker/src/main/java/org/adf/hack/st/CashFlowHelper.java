@@ -62,7 +62,7 @@ public class CashFlowHelper {
 
   static HttpClient sync;
 
-  static ExecutorService ex = Executors.newWorkStealingPool(10);
+  static ExecutorService ex = Executors.newFixedThreadPool(10);
 
   static ConnectionKeepAliveStrategy myStrategy = new ConnectionKeepAliveStrategy() {
     @Override
@@ -110,13 +110,17 @@ public class CashFlowHelper {
     DateTime dt = DateTime.now();
     CountDownLatch latch = new CountDownLatch(1);
     // result.setKey(cfEntity.getId());
-    new Runnable() {
+    Runnable task = new Runnable() {
       @Override
       public void run() {
         setCashflow(cfEntity, result, dt);
         latch.countDown();
       }
     };
+//    Thread t = new Thread(task);
+//    t.setPriority(Thread.MAX_PRIORITY);
+//    t.start();
+    ex.submit(task);
     latch.await();
     setBankNameAsync(result);
     // setBankName(result, routingNumber);
