@@ -81,7 +81,7 @@ public class CashFlowHelper {
 
   public static void process(CashFlow cfEntity, CashFlowResult result, CountDownLatch latch)
       throws Exception {
-//     DateTime dt = DateTime.now();
+     DateTime dt = DateTime.now();
     result.setKey(cfEntity.getId());
     // String file = "D:\\ADF\\workspace\\derewrite\\SprintHacker\\" + "test5.xml";
     String file = cfEntity.getFile();
@@ -98,7 +98,7 @@ public class CashFlowHelper {
     AutoPilot ap = new AutoPilot(vn);
     result.setCashFlow(getCashFlowVal(vn, ap));
     String routingNumber = getRoutingNumber(vn, ap);
-//    System.out.println("XML Parsing 1 ==" + (DateTime.now().getMillis() - dt.getMillis()) + " -- " + Thread.currentThread().getName());
+    System.out.println("XML Parsing 1 ==" + Thread.currentThread().getName()+ (DateTime.now().getMillis() - dt.getMillis()));
     result.setBankName(getBankName(routingNumber));
     // System.out.println("XML Parsing 1 ==" + (DateTime.now().getMillis() - dt.getMillis()));
     // ex.submit(new Runnable() {
@@ -158,7 +158,7 @@ public class CashFlowHelper {
   }
 
   public static String getBankName(String routingNum) throws Exception {
-//    DateTime dt = DateTime.now();
+    DateTime dt = DateTime.now();
     // String resp = simulate();
     // String resp = http.go().get().expecting(String.class).at(BANK_SERVICE + routingNum);
     HttpGet getRequest = new HttpGet(BANK_SERVICE + routingNum);
@@ -173,8 +173,8 @@ public class CashFlowHelper {
     // String resp = http.go().get().at(BANK_SERVICE +
     // routingNum).body().getAsJsonObject().get(BANK_NAME_KEY).getAsString();
     // String bankName = resp;
-//    System.out.println(
-//        "Bank Service == " + bankName + " -- " + (DateTime.now().getMillis() - dt.getMillis()));
+    System.out.println(
+        "Bank Service == " + Thread.currentThread().getName() + " -- " + (DateTime.now().getMillis() - dt.getMillis()));
     return bankName;
   }
 
