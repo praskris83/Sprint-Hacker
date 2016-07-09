@@ -17,10 +17,13 @@ import org.adf.cashflow.CashFlowResult;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.http.ConnectionReuseStrategy;
+import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.concurrent.FutureCallback;
 import org.apache.http.conn.ConnectionKeepAliveStrategy;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.apache.http.impl.nio.client.CloseableHttpAsyncClient;
 import org.apache.http.impl.nio.client.HttpAsyncClients;
@@ -52,6 +55,8 @@ public class CashFlowHelper {
 
   static CloseableHttpAsyncClient client;
 
+  static HttpClient sync;
+
   static ExecutorService ex = Executors.newWorkStealingPool(10);
 
   static ConnectionKeepAliveStrategy myStrategy = new ConnectionKeepAliveStrategy() {
@@ -62,21 +67,25 @@ public class CashFlowHelper {
   };
 
   static {
-//    PoolingHttpClientConnectionManager connManager =
-//        new PoolingHttpClientConnectionManager(10, TimeUnit.MINUTES);
-//    connManager.setDefaultMaxPerRoute(30);
-//    connManager.setMaxTotal(60);
+    PoolingHttpClientConnectionManager connManager =
+        new PoolingHttpClientConnectionManager(10, TimeUnit.MINUTES);
+    connManager.setDefaultMaxPerRoute(30);
+    connManager.setMaxTotal(60);
     // connManager.getD
-    client = HttpAsyncClients.custom().setKeepAliveStrategy(myStrategy).setMaxConnPerRoute(30)
-        .setMaxConnTotal(50).setConnectionReuseStrategy(new ConnectionReuseStrategy() {
+    ConnectionReuseStrategy reuseStrategy = new ConnectionReuseStrategy() {
 
-          @Override
-          public boolean keepAlive(HttpResponse response, HttpContext context) {
-            // TODO Auto-generated method stub
-            return true;
-          }
-        }).build();
+      @Override
+      public boolean keepAlive(HttpResponse response, HttpContext context) {
+        // TODO Auto-generated method stub
+        return true;
+      }
+    };
+    client = HttpAsyncClients.custom().setKeepAliveStrategy(myStrategy).setMaxConnPerRoute(30)
+        .setMaxConnTotal(50).setConnectionReuseStrategy(reuseStrategy).build();
     client.start();
+    sync = HttpClientBuilder.create().setConnectionManager(connManager)
+        .setConnectionReuseStrategy(reuseStrategy).setConnectionTimeToLive(10, TimeUnit.MINUTES)
+        .setKeepAliveStrategy(myStrategy).build();
     // .set
     // .setConnectionManager(connManager).build();
     // http = AlchemyHttp.newInstanceWithApacheHttpClient(client);
@@ -113,21 +122,8 @@ public class CashFlowHelper {
     String routingNumber = getRoutingNumber(vn, ap);
     System.out.println("XML Parsing 1 ==" + Thread.currentThread().getName() + " -- "
         + (DateTime.now().getMillis() - dt.getMillis()) + DateTime.now().getMillisOfDay());
+//    setBankNameAsync(result, routingNumber);
     setBankName(result, routingNumber);
-    // System.out.println("XML Parsing 1 ==" + (DateTime.now().getMillis() - dt.getMillis()));
-    // ex.submit(new Runnable() {
-    // @Override
-    // public void run() {
-    // try {
-    // result.setBankName(getBankName(routingNumber));
-    // latch.countDown();
-    // } catch (Exception e) {
-    // // TODO Auto-generated catch block
-    // e.printStackTrace();
-    // }
-    // }
-    // });
-    // System.out.println("CashFlow Int" + result.getCashFlow());
   }
 
   public static int getCashFlowVal(VTDNav vn, AutoPilot ap) throws PilotException, NavException {
@@ -171,13 +167,14 @@ public class CashFlowHelper {
     return null;
   }
 
-  public static void setBankName(CashFlowResult result, String routingNum) throws Exception {
+  public static void setBankNameAsync(CashFlowResult result, String routingNum) throws Exception {
     DateTime dt = DateTime.now();
     CountDownLatch latch = new CountDownLatch(1);
     HttpGet getRequest = new HttpGet(BANK_SERVICE + routingNum);
     final CountDownLatch latch1 = new CountDownLatch(1);
     client.execute(getRequest, new FutureCallback<HttpResponse>() {
       final String bankName = "";
+
       public void completed(final HttpResponse execute) {
         Map<String, String> bankData;
         try {
@@ -188,7 +185,7 @@ public class CashFlowHelper {
         } catch (Exception e) {
           // TODO Auto-generated catch block
           e.printStackTrace();
-        }finally {
+        } finally {
           latch.countDown();
         }
       }
@@ -202,6 +199,22 @@ public class CashFlowHelper {
       }
 
     });
+    System.out.println("Bank Service == " + Thread.currentThread().getName() + " -- "
+        + (DateTime.now().getMillis() - dt.getMillis()) + DateTime.now().getMillisOfDay());
+  }
+
+  public static void setBankName(CashFlowResult result, String routingNum) throws Exception {
+    DateTime dt = DateTime.now();
+    HttpGet getRequest = new HttpGet(BANK_SERVICE + routingNum);
+    HttpEntity resp = sync.execute(getRequest).getEntity();
+    try {
+      Map<String, String> bankData = mapper.readValue(resp.getContent(), Map.class);
+      result.setBankName(bankData.get(BANK_NAME_KEY));
+    } catch (Exception e) {
+      // TODO Auto-generated catch block
+      e.printStackTrace();
+    } finally {
+    }
     System.out.println("Bank Service == " + Thread.currentThread().getName() + " -- "
         + (DateTime.now().getMillis() - dt.getMillis()) + DateTime.now().getMillisOfDay());
   }
@@ -226,7 +239,7 @@ public class CashFlowHelper {
       VTDNav vn = vg.getNav();
       AutoPilot ap = new AutoPilot(vn);
       String routingNumber = getRoutingNumber(vn, ap);
-//      result.setBankName(getBankName(routingNumber));
+      // result.setBankName(getBankName(routingNumber));
       // System.out.println("XML Parsing 2 ==" + (DateTime.now().getMillis() - dt.getMillis()));
     } catch (Exception e) {
       e.printStackTrace();
