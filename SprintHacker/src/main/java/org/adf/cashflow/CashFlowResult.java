@@ -82,7 +82,7 @@ public class CashFlowResult implements Runnable {
   public void run() {
     try {
       CashFlowHelper.process(entity, this, latch);
-      System.out.println("              ts" + Thread.currentThread().getName() + " -- " + DateTime.now());
+      System.out.println("              ts" + Thread.currentThread().getName() + " --  " + DateTime.now().getMillisOfDay());
     } catch (Exception e) {
       e.printStackTrace();
     } finally {
