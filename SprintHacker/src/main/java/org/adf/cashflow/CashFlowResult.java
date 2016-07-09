@@ -21,6 +21,9 @@ public class CashFlowResult implements Runnable {
   int cashFlow;
 
   String bankName;
+  
+  @JsonIgnore
+  String routing;
 
   @JsonIgnore
   CashFlow entity;
@@ -77,11 +80,19 @@ public class CashFlowResult implements Runnable {
   public void setEntity(CashFlow entity) {
     this.entity = entity;
   }
+  
+  public String getRouting() {
+    return routing;
+  }
+
+  public void setRouting(String routing) {
+    this.routing = routing;
+  }
 
   @Override
   public void run() {
     try {
-      CashFlowHelper.process(entity, this, latch);
+      CashFlowHelper.process(entity, this);
       System.out.println("              ts" + Thread.currentThread().getName() + " --  " + DateTime.now().getMillisOfDay());
     } catch (Exception e) {
       e.printStackTrace();

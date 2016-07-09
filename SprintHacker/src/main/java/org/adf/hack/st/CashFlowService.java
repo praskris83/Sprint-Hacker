@@ -49,7 +49,7 @@ public class CashFlowService {
 //    List<CashFlow> cashflows = new LinkedList<CashFlow>();
 //    System.out.println("IN == " + DateTime.now());
 //    DateTime dt = DateTime.now();
-    System.out.println("              dt" + Thread.currentThread().getName() + " --  " + DateTime.now().getMillisOfDay());
+    System.out.println("                dt" + Thread.currentThread().getName() + " --  " + DateTime.now().getMillisOfDay());
     String[] split = key.split(",");
     List<String> asList = Arrays.asList(split);
     List<CashFlow> cashflows = dbHelper.findAll(asList);
@@ -109,7 +109,7 @@ public class CashFlowService {
     }
 //    System.out.println("Total S+ervice Time" + (DateTime.now().getMillis() - dt.getMillis()));
 //    System.out.println("OUT == " + DateTime.now());
-    System.out.println("              en" + Thread.currentThread().getName() + " --  " + DateTime.now().getMillisOfDay());
+    System.out.println("                en" + Thread.currentThread().getName() + " --  " + DateTime.now().getMillisOfDay());
     return results;
   }
 }

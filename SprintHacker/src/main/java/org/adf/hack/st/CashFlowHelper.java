@@ -5,6 +5,7 @@ package org.adf.hack.st;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -34,7 +35,11 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ximpleware.AutoPilot;
+import com.ximpleware.EOFException;
+import com.ximpleware.EncodingException;
+import com.ximpleware.EntityException;
 import com.ximpleware.NavException;
+import com.ximpleware.ParseException;
 import com.ximpleware.PilotException;
 import com.ximpleware.VTDGen;
 import com.ximpleware.VTDNav;
@@ -101,29 +106,44 @@ public class CashFlowHelper {
   // this.cashFlowResult = cashFlowResult;
   // }
 
-  public static void process(CashFlow cfEntity, CashFlowResult result, CountDownLatch latch)
-      throws Exception {
+  public static void process(CashFlow cfEntity, CashFlowResult result) throws Exception {
     DateTime dt = DateTime.now();
+    CountDownLatch latch = new CountDownLatch(1);
     // result.setKey(cfEntity.getId());
+    new Runnable() {
+      @Override
+      public void run() {
+        setCashflow(cfEntity, result, dt);
+        latch.countDown();
+      }
+    };
+    latch.await();
+    setBankNameAsync(result);
+    // setBankName(result, routingNumber);
+  }
+
+  protected static void setCashflow(CashFlow cfEntity, CashFlowResult result, DateTime dt) {
     // String file = "D:\\ADF\\workspace\\derewrite\\SprintHacker\\" + "test5.xml";
-    String file = cfEntity.getFile();
-    VTDGen vg = new VTDGen();
-    File f = new File(file);
-    FileInputStream fis = new FileInputStream(f);
-    byte[] readFileToByteArray = new byte[(int) f.length()];
-    fis.read(readFileToByteArray);
-    fis.close();
-    // vg.setDoc(FileUtils.readFileToByteArray(f));
-    vg.setDoc(readFileToByteArray);
-    vg.parse(false);
-    VTDNav vn = vg.getNav();
-    AutoPilot ap = new AutoPilot(vn);
-    result.setCashFlow(getCashFlowVal(vn, ap));
-    String routingNumber = getRoutingNumber(vn, ap);
-    System.out.println("XML Parsing 1 ==" + Thread.currentThread().getName() + " -- "
-        + (DateTime.now().getMillis() - dt.getMillis()) + DateTime.now().getMillisOfDay());
-//    setBankNameAsync(result, routingNumber);
-    setBankName(result, routingNumber);
+    try {
+      String file = cfEntity.getFile();
+      VTDGen vg = new VTDGen();
+      File f = new File(file);
+      FileInputStream fis = new FileInputStream(f);
+      byte[] readFileToByteArray = new byte[(int) f.length()];
+      fis.read(readFileToByteArray);
+      fis.close();
+      // vg.setDoc(FileUtils.readFileToByteArray(f));
+      vg.setDoc(readFileToByteArray);
+      vg.parse(false);
+      VTDNav vn = vg.getNav();
+      AutoPilot ap = new AutoPilot(vn);
+      result.setCashFlow(getCashFlowVal(vn, ap));
+      result.setRouting(getRoutingNumber(vn, ap));
+      System.out.println("XML Parsing 1 ==" + Thread.currentThread().getName() + " -- "
+          + (DateTime.now().getMillis() - dt.getMillis()) + " " +DateTime.now().getMillisOfDay());      
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
   }
 
   public static int getCashFlowVal(VTDNav vn, AutoPilot ap) throws PilotException, NavException {
@@ -167,10 +187,10 @@ public class CashFlowHelper {
     return null;
   }
 
-  public static void setBankNameAsync(CashFlowResult result, String routingNum) throws Exception {
+  public static void setBankNameAsync(CashFlowResult result) throws Exception {
     DateTime dt = DateTime.now();
     CountDownLatch latch = new CountDownLatch(1);
-    HttpGet getRequest = new HttpGet(BANK_SERVICE + routingNum);
+    HttpGet getRequest = new HttpGet(BANK_SERVICE + result.getRouting());
     final CountDownLatch latch1 = new CountDownLatch(1);
     client.execute(getRequest, new FutureCallback<HttpResponse>() {
       final String bankName = "";
@@ -200,7 +220,7 @@ public class CashFlowHelper {
 
     });
     System.out.println("Bank Service == " + Thread.currentThread().getName() + " -- "
-        + (DateTime.now().getMillis() - dt.getMillis()) + DateTime.now().getMillisOfDay());
+        + (DateTime.now().getMillis() - dt.getMillis()) + " " + DateTime.now().getMillisOfDay());
   }
 
   public static void setBankName(CashFlowResult result, String routingNum) throws Exception {
