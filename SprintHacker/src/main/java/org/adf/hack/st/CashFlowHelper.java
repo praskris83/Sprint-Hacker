@@ -117,10 +117,10 @@ public class CashFlowHelper {
         latch.countDown();
       }
     };
-//    Thread t = new Thread(task);
-//    t.setPriority(Thread.MAX_PRIORITY);
-//    t.start();
-    ex.submit(task);
+    Thread t = new Thread(task);
+    t.setPriority(Thread.MAX_PRIORITY);
+    t.start();
+//    ex.submit(task);
     latch.await();
     setBankNameAsync(result);
     // setBankName(result, routingNumber);
