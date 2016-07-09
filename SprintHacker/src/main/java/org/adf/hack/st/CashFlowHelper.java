@@ -97,7 +97,7 @@ public class CashFlowHelper {
     VTDNav vn = vg.getNav();
     AutoPilot ap = new AutoPilot(vn);
     result.setCashFlow(getCashFlowVal(vn, ap));
-    result.setBankName(getBankName(getRoutingNumber(vn, ap)));
+//    result.setBankName(getBankName(getRoutingNumber(vn, ap)));
     // System.out.println("XML Parsing 1 ==" + (DateTime.now().getMillis() - dt.getMillis()));
     // ex.submit(new Runnable() {
     // @Override
