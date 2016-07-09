@@ -126,7 +126,7 @@ public class CashFlowHelper {
   // // setBankName(result, routingNumber);
   // }
 
-  public static void parseXml(CashFlow cfEntity, CashFlowResult result, VTDGen vg,
+  public static void parseXml(CashFlow cfEntity, CashFlowResult result, VTDNav vn,
       CountDownLatch latch) {
     // String file = "D:\\ADF\\workspace\\derewrite\\SprintHacker\\" + "test5.xml";
     Runnable task = new Runnable() {
@@ -134,7 +134,7 @@ public class CashFlowHelper {
       public void run() {
         try {
           DateTime dt = DateTime.now();
-          setXMLDetails(result, vg);
+          setXMLDetails(result, vn);
           System.out.println("XML  Pars Time for " + Thread.currentThread().getName() + " -- " +
           (DateTime.now().getMillis() - dt.getMillis()));
         } catch (Exception e) {
@@ -148,15 +148,15 @@ public class CashFlowHelper {
     ex.submit(task);
   }
 
-  protected static void setXMLDetails(CashFlowResult result, VTDGen vg)
+  protected static void setXMLDetails(CashFlowResult result, VTDNav vn)
       throws PilotException, NavException {
-    VTDNav vn = vg.getNav();
+//    VTDNav vn = vn.getNav();
     vn.toElement(VTDNav.ROOT);
     AutoPilot ap = new AutoPilot(vn);
     result.setCashFlow(getCashFlowVal(vn, ap));
   }
 
-  protected static void read(CashFlow cfEntity, VTDGen vg) throws FileNotFoundException,
+  protected static void read(CashFlow cfEntity, VTDNav vn) throws FileNotFoundException,
       IOException, EncodingException, EOFException, EntityException, ParseException {
     String file = cfEntity.getFile();
     File f = new File(file);
@@ -165,8 +165,10 @@ public class CashFlowHelper {
     fis.read(readFileToByteArray);
     fis.close();
     // vg.setDoc(FileUtils.readFileToByteArray(f));
+    VTDGen vg = new VTDGen();
     vg.setDoc(readFileToByteArray);
     vg.parse(false);
+    vn = vg.getNav();
   }
 
   public static int getCashFlowVal(VTDNav vn, AutoPilot ap) throws PilotException, NavException {
@@ -282,14 +284,14 @@ public class CashFlowHelper {
   }
 
   public static void initParser(CashFlow cfEntity, CashFlowResult cashFlowResult,
-      CountDownLatch latch, VTDGen vg) {
+      CountDownLatch latch, VTDNav vn) {
     Runnable task = new Runnable() {
       @Override
       public void run() {
         try {
           DateTime dt = DateTime.now();
-          read(cfEntity, vg);
-          cashFlowResult.setRouting(getRoutingNumber(vg.getNav()));
+          read(cfEntity, vn);
+          cashFlowResult.setRouting(getRoutingNumber(vn));
           System.out.println("File Read Time for " + Thread.currentThread().getName() + " -- " +
           (DateTime.now().getMillis() - dt.getMillis()));
         } catch (Exception e) {

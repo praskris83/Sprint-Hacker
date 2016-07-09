@@ -10,6 +10,7 @@ import org.joda.time.DateTime;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ximpleware.VTDGen;
+import com.ximpleware.VTDNav;
 
 /**
  * @author Prasad
@@ -94,12 +95,12 @@ public class CashFlowResult implements Runnable {
   public void run() {
     try {
       CountDownLatch fileRead = new CountDownLatch(1);
-      VTDGen vg = new VTDGen();
-      CashFlowHelper.initParser(entity, this,fileRead,vg);
+      VTDNav vn = null;
+      CashFlowHelper.initParser(entity, this,fileRead,vn);
       fileRead.await();
       CountDownLatch latch = new CountDownLatch(2);
       CashFlowHelper.setBankNameAsync(this,latch);
-      CashFlowHelper.parseXml(entity, this, vg,latch);
+      CashFlowHelper.parseXml(entity, this, vn,latch);
       latch.await();
 //      CountDownLatch service = new CountDownLatch(1);
 //      service.await();
