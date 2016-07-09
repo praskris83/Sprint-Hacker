@@ -108,6 +108,7 @@ public class CashFlowService {
     }
 //    System.out.println("Total S+ervice Time" + (DateTime.now().getMillis() - dt.getMillis()));
 //    System.out.println("OUT == " + DateTime.now());
+    System.out.println("              en" + Thread.currentThread().getName() + " -- " + DateTime.now());
     return results;
   }
 }

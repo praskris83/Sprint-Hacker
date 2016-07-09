@@ -6,6 +6,7 @@ package org.adf.cashflow;
 import java.util.concurrent.CountDownLatch;
 
 import org.adf.hack.st.CashFlowHelper;
+import org.joda.time.DateTime;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -81,6 +82,7 @@ public class CashFlowResult implements Runnable {
   public void run() {
     try {
       CashFlowHelper.process(entity, this, latch);
+      System.out.println("              ts" + Thread.currentThread().getName() + " -- " + DateTime.now());
     } catch (Exception e) {
       e.printStackTrace();
     } finally {

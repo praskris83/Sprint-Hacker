@@ -82,7 +82,7 @@ public class CashFlowHelper {
   public static void process(CashFlow cfEntity, CashFlowResult result, CountDownLatch latch)
       throws Exception {
      DateTime dt = DateTime.now();
-    result.setKey(cfEntity.getId());
+//    result.setKey(cfEntity.getId());
     // String file = "D:\\ADF\\workspace\\derewrite\\SprintHacker\\" + "test5.xml";
     String file = cfEntity.getFile();
     VTDGen vg = new VTDGen();
@@ -98,7 +98,7 @@ public class CashFlowHelper {
     AutoPilot ap = new AutoPilot(vn);
     result.setCashFlow(getCashFlowVal(vn, ap));
     String routingNumber = getRoutingNumber(vn, ap);
-    System.out.println("XML Parsing 1 ==" + Thread.currentThread().getName()+ (DateTime.now().getMillis() - dt.getMillis()));
+    System.out.println("XML Parsing 1 ==" + Thread.currentThread().getName()+ " -- " +(DateTime.now().getMillis() - dt.getMillis()));
     result.setBankName(getBankName(routingNumber));
     // System.out.println("XML Parsing 1 ==" + (DateTime.now().getMillis() - dt.getMillis()));
     // ex.submit(new Runnable() {
