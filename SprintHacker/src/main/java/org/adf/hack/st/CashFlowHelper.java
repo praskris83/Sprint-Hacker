@@ -19,6 +19,7 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.conn.ConnectionKeepAliveStrategy;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -165,7 +166,9 @@ public class CashFlowHelper {
     // StringWriter writer = new StringWriter();
     // String resp =
     // IOUtils.toString(client.execute(getRequest).getEntity().getContent(),Charset.defaultCharset());
-    Map<String, String> bankData = mapper.readValue(client.execute(getRequest).getEntity().getContent(), Map.class);
+    CloseableHttpResponse execute = client.execute(getRequest);
+    Map<String, String> bankData = mapper.readValue(execute.getEntity().getContent(), Map.class);
+    execute.close();
     // Map<String, String> bankData = mapper.readValue(resp, Map.class);
     String bankName = bankData.get(BANK_NAME_KEY);
     // String resp = http.go().get().at(BANK_SERVICE +
