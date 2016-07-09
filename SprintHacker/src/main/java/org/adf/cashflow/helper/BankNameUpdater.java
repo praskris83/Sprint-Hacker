@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 import org.adf.cashflow.CashFlow;
 import org.adf.cashflow.CashFlowResult;
@@ -40,8 +41,7 @@ import tech.sirwellington.alchemy.http.exceptions.AlchemyHttpException;
 @Service
 public class BankNameUpdater {
 
-  @Autowired
-  ObjectMapper mapper;
+  static ObjectMapper mapper;
 
   private static final String BANK_SERVICE = "https://dev-ui1.adfdata.net/hacker/bank/";
 
@@ -57,7 +57,8 @@ public class BankNameUpdater {
   };
 
   static {
-    PoolingHttpClientConnectionManager connManager = new PoolingHttpClientConnectionManager();
+    PoolingHttpClientConnectionManager connManager =
+        new PoolingHttpClientConnectionManager(10, TimeUnit.MINUTES);
     connManager.setDefaultMaxPerRoute(30);
     connManager.setMaxTotal(40);
     CloseableHttpClient client = HttpClients.custom().setKeepAliveStrategy(myStrategy)
@@ -112,7 +113,7 @@ public class BankNameUpdater {
     return null;
   }
 
-  public String getBankName(String routingNum) throws AlchemyHttpException,
+  public static String getBankName(String routingNum) throws AlchemyHttpException,
       IllegalArgumentException, JsonParseException, JsonMappingException, IOException {
      DateTime dt = DateTime.now();
     String resp = http.go().get().expecting(String.class).at(BANK_SERVICE + routingNum);
@@ -121,8 +122,8 @@ public class BankNameUpdater {
     // String resp = http.go().get().at(BANK_SERVICE +
     // routingNum).body().getAsJsonObject().get(BANK_NAME_KEY).getAsString();
     // String bankName = resp;
-     System.out.println("Bank Service == " + bankName +" -- "+ (DateTime.now().getMillis() -
-     dt.getMillis()));
+//     System.out.println("Bank Service == " + bankName +" -- "+ (DateTime.now().getMillis() -
+//     dt.getMillis()));
     return bankName;
   }
 }
