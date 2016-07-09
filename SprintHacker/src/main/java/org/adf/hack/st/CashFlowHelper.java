@@ -72,10 +72,10 @@ public class CashFlowHelper {
   };
 
   static {
-    PoolingHttpClientConnectionManager connManager =
-        new PoolingHttpClientConnectionManager(10, TimeUnit.MINUTES);
-    connManager.setDefaultMaxPerRoute(30);
-    connManager.setMaxTotal(60);
+//    PoolingHttpClientConnectionManager connManager =
+//        new PoolingHttpClientConnectionManager(10, TimeUnit.MINUTES);
+//    connManager.setDefaultMaxPerRoute(30);
+//    connManager.setMaxTotal(60);
     // connManager.getD
     ConnectionReuseStrategy reuseStrategy = new ConnectionReuseStrategy() {
 
@@ -86,11 +86,12 @@ public class CashFlowHelper {
       }
     };
     client = HttpAsyncClients.custom().setKeepAliveStrategy(myStrategy).setMaxConnPerRoute(30)
-        .setMaxConnTotal(50).setConnectionReuseStrategy(reuseStrategy).build();
+        .setMaxConnTotal(50).setConnectionReuseStrategy(reuseStrategy).setConnectionManagerShared(true)
+        .build();
     client.start();
-    sync = HttpClientBuilder.create().setConnectionManager(connManager)
-        .setConnectionReuseStrategy(reuseStrategy).setConnectionTimeToLive(10, TimeUnit.MINUTES)
-        .setKeepAliveStrategy(myStrategy).build();
+//    sync = HttpClientBuilder.create().setConnectionManager(connManager)
+//        .setConnectionReuseStrategy(reuseStrategy).setConnectionTimeToLive(10, TimeUnit.MINUTES)
+//        .setKeepAliveStrategy(myStrategy).build();
     // .set
     // .setConnectionManager(connManager).build();
     // http = AlchemyHttp.newInstanceWithApacheHttpClient(client);
@@ -156,7 +157,7 @@ public class CashFlowHelper {
     result.setCashFlow(getCashFlowVal(vn, ap));
   }
 
-  protected static void read(CashFlow cfEntity, VTDNav vn) throws FileNotFoundException,
+  public static VTDNav read(CashFlow cfEntity) throws FileNotFoundException,
       IOException, EncodingException, EOFException, EntityException, ParseException {
     String file = cfEntity.getFile();
     File f = new File(file);
@@ -168,7 +169,8 @@ public class CashFlowHelper {
     VTDGen vg = new VTDGen();
     vg.setDoc(readFileToByteArray);
     vg.parse(false);
-    vn = vg.getNav();
+    VTDNav vn = vg.getNav();
+    return vn;
   }
 
   public static int getCashFlowVal(VTDNav vn, AutoPilot ap) throws PilotException, NavException {
@@ -290,7 +292,7 @@ public class CashFlowHelper {
       public void run() {
         try {
           DateTime dt = DateTime.now();
-          read(cfEntity, vn);
+          read(cfEntity);
           cashFlowResult.setRouting(getRoutingNumber(vn));
           System.out.println("File Read Time for " + Thread.currentThread().getName() + " -- " +
           (DateTime.now().getMillis() - dt.getMillis()));

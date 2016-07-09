@@ -94,10 +94,11 @@ public class CashFlowResult implements Runnable {
   @Override
   public void run() {
     try {
-      CountDownLatch fileRead = new CountDownLatch(1);
-      VTDNav vn = null;
-      CashFlowHelper.initParser(entity, this,fileRead,vn);
-      fileRead.await();
+//      CountDownLatch fileRead = new CountDownLatch(1);
+//      VTDNav vn = null;
+//      CashFlowHelper.initParser(entity, this,fileRead,vn);
+//      fileRead.await();
+      VTDNav vn = CashFlowHelper.read(entity);
       CountDownLatch latch = new CountDownLatch(2);
       CashFlowHelper.setBankNameAsync(this,latch);
       CashFlowHelper.parseXml(entity, this, vn,latch);
