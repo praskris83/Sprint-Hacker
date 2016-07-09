@@ -5,8 +5,6 @@ package org.adf.hack.st;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.StringWriter;
-import java.nio.charset.Charset;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -16,7 +14,6 @@ import java.util.concurrent.TimeUnit;
 import org.adf.cashflow.CashFlow;
 import org.adf.cashflow.CashFlowResult;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -67,7 +64,7 @@ public class CashFlowHelper {
     connManager.setMaxTotal(60);
     // connManager.getD
     client = HttpClients.custom()
-        // .setKeepAliveStrategy(myStrategy)
+        .setKeepAliveStrategy(myStrategy)
         .setConnectionManager(connManager).build();
     // http = AlchemyHttp.newInstanceWithApacheHttpClient(client);
   }
