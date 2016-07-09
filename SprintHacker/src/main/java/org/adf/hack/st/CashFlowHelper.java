@@ -98,7 +98,7 @@ public class CashFlowHelper {
     AutoPilot ap = new AutoPilot(vn);
     result.setCashFlow(getCashFlowVal(vn, ap));
     String routingNumber = getRoutingNumber(vn, ap);
-    System.out.println("XML Parsing 1 ==" + (DateTime.now().getMillis() - dt.getMillis()));
+    System.out.println("XML Parsing 1 ==" + (DateTime.now().getMillis() - dt.getMillis()) + " -- " + Thread.currentThread().getName());
 //    result.setBankName(getBankName(routingNumber));
     // System.out.println("XML Parsing 1 ==" + (DateTime.now().getMillis() - dt.getMillis()));
     // ex.submit(new Runnable() {
