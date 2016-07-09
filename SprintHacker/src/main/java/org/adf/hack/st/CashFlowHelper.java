@@ -117,10 +117,10 @@ public class CashFlowHelper {
         latch.countDown();
       }
     };
-    Thread t = new Thread(task);
-    t.setPriority(Thread.MAX_PRIORITY);
-    t.start();
-//    ex.submit(task);
+//    Thread t = new Thread(task);
+//    t.setPriority(Thread.MAX_PRIORITY);
+//    t.start();
+    ex.submit(task);
     latch.await();
     setBankNameAsync(result);
     // setBankName(result, routingNumber);
@@ -168,15 +168,14 @@ public class CashFlowHelper {
 
   public static String getRoutingNumber(VTDNav vn, AutoPilot ap) {
     // DateTime dt = DateTime.now();
-    vn = vn.duplicateNav();
-    ap.bind(vn);
-    ap.selectElement("RoutingNumberEntered");
     try {
+      vn.toElement(VTDNav.ROOT);
+      ap.selectElement("RoutingNumberEntered");
       while (ap.iterate()) {
         int t = vn.getText();
         if (t != -1) {
           String val = vn.toNormalizedString(t);
-          // System.out.println(" Routing Num ==> " + val);
+//          System.out.println(" Routing Num ==> " + val);
           return val;
         }
       }
