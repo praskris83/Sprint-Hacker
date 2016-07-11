@@ -87,8 +87,8 @@ public class CashFlowHelper {
         return true;
       }
     };
-    client = HttpAsyncClients.custom().setKeepAliveStrategy(myStrategy).setMaxConnPerRoute(1)
-        .setMaxConnTotal(1).setConnectionReuseStrategy(reuseStrategy)
+    client = HttpAsyncClients.custom().setKeepAliveStrategy(myStrategy).setMaxConnPerRoute(5)
+        .setMaxConnTotal(10).setConnectionReuseStrategy(reuseStrategy)
         .build();
     client.start();
 //    sync = HttpClientBuilder.create().setConnectionManager(connManager)
