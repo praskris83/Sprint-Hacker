@@ -14,8 +14,6 @@ import javax.transaction.Transactional;
 
 import org.adf.cashflow.CashFlow;
 import org.adf.cashflow.CashFlowResult;
-import org.adf.cashflow.helper.BankNameUpdater;
-import org.adf.cashflow.helper.CashFlowUpdater;
 import org.adf.cashflow.helper.DBHelper;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,25 +31,19 @@ public class CashFlowService {
   ExecutorService ex1 = Executors.newFixedThreadPool(10);
 
   @Autowired
-  BankNameUpdater bankService;
-
-  @Autowired
-  CashFlowUpdater cashService;
-
-  @Autowired
   DBHelper dbHelper;
 
   @RequestMapping("/prasad")
   @Transactional
   public List<CashFlowResult> getCashFlowDetails(
       @RequestParam(value = "key", defaultValue = "test") String key) {
-//    List<CashFlow> cashflows = new LinkedList<CashFlow>();
-//    System.out.println("IN == " + DateTime.now());
 //    DateTime dt = DateTime.now();
-    System.out.println("                dt " + Thread.currentThread().getName() + " --  " + DateTime.now().getMillisOfDay());
+//    System.out.println("                dt " + Thread.currentThread().getName() + " --  " + dt.getMillisOfDay());
     String[] split = key.split(",");
     List<String> asList = Arrays.asList(split);
+//    System.out.println("DB Fetch" + (DateTime.now().getMillis() - dt.getMillis()));
     List<CashFlow> cashflows = dbHelper.findAll(asList);
+//    List<CashFlow> cashflows = dbHelper.findAllNative(split);
     List<CashFlowResult> results = new ArrayList<CashFlowResult>();
 //    System.out.println("DB Fetch" + (DateTime.now().getMillis() - dt.getMillis()));
     CountDownLatch latch = new CountDownLatch(cashflows.size()*1);
@@ -71,6 +63,7 @@ public class CashFlowService {
         @Override
         public void run() {
           dbHelper.save(cashflows);
+          ex.shutdown();
 //           System.out.println("DB Save" + (DateTime.now().getMillis() - dt.getMillis()));
         }
       });
@@ -80,7 +73,8 @@ public class CashFlowService {
     }
 //    System.out.println("Total S+ervice Time" + (DateTime.now().getMillis() - dt.getMillis()));
 //    System.out.println("OUT == " + DateTime.now());
-    System.out.println("                en" + Thread.currentThread().getName() + " --  " + DateTime.now().getMillisOfDay());
+//    System.out.println("                en" + Thread.currentThread().getName() + " --  " + DateTime.now().getMillisOfDay());
+//    System.out.println("Total S+ervice Time" + (DateTime.now().getMillis() - dt.getMillis()));
     return results;
   }
 }

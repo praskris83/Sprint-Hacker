@@ -106,7 +106,7 @@ public class CashFlowResult implements Runnable {
       latch.await();
 //      CountDownLatch service = new CountDownLatch(1);
 //      service.await();
-      System.out.println("              ts" + Thread.currentThread().getName() + " --  " + DateTime.now().getMillisOfDay());
+//      System.out.println("              ts" + Thread.currentThread().getName() + " --  " + DateTime.now().getMillisOfDay());
     } catch (Exception e) {
       e.printStackTrace();
     } finally {

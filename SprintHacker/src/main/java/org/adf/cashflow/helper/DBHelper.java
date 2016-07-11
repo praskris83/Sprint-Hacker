@@ -10,6 +10,7 @@ import javax.transaction.Transactional;
 import org.adf.cashflow.CashFlow;
 import org.adf.cashflow.CashFlowRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 /**
@@ -23,6 +24,9 @@ public class DBHelper {
   @Autowired
   CashFlowRepo repo;
   
+  @Autowired
+  JdbcTemplate jdbcTemplate;
+  
   public List<CashFlow> findAll(List<String> ids){
     return repo.findAll(ids);
   }
@@ -33,5 +37,9 @@ public class DBHelper {
 
   public CashFlow findOne(String id) {
     return repo.findOne(id);
+  }
+
+  public List<CashFlow> findAllNative(String[] split){
+    return repo.findAllKeys(split);
   }
 }

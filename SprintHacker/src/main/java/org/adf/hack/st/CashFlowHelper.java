@@ -55,6 +55,8 @@ public class CashFlowHelper {
   private static final String BANK_SERVICE = "https://dev-ui1.adfdata.net/hacker/bank/";
 
   private static final String BANK_NAME_KEY = "bankName";
+  
+  private static final String MOCK_FILE = "C:\\Users\\prasad\\github\\SprintHacker\\test5.xml";
 
   // static AlchemyHttp http;
 
@@ -81,7 +83,7 @@ public class CashFlowHelper {
 
       @Override
       public boolean keepAlive(HttpResponse response, HttpContext context) {
-        // TODO Auto-generated method stub
+        System.out.println("Keep It LIve *******************************");
         return true;
       }
     };
@@ -134,10 +136,10 @@ public class CashFlowHelper {
       @Override
       public void run() {
         try {
-          DateTime dt = DateTime.now();
+//          DateTime dt = DateTime.now();
           setXMLDetails(result, vn);
-          System.out.println("XML  Pars Time for " + Thread.currentThread().getName() + " -- " +
-          (DateTime.now().getMillis() - dt.getMillis()));
+//          System.out.println("XML  Pars Time for " + Thread.currentThread().getName() + " -- " +
+//          (DateTime.now().getMillis() - dt.getMillis()));
         } catch (Exception e) {
           // TODO Auto-generated catch block
           e.printStackTrace();
@@ -159,8 +161,9 @@ public class CashFlowHelper {
 
   public static VTDNav read(CashFlow cfEntity) throws FileNotFoundException,
       IOException, EncodingException, EOFException, EntityException, ParseException {
-    DateTime dt = DateTime.now();
+//    DateTime dt = DateTime.now();
     String file = cfEntity.getFile();
+//    file = MOCK_FILE;
     File f = new File(file);
     FileInputStream fis = new FileInputStream(f);
     byte[] readFileToByteArray = new byte[(int) f.length()];
@@ -171,8 +174,8 @@ public class CashFlowHelper {
     vg.setDoc(readFileToByteArray);
     vg.parse(false);
     VTDNav vn = vg.getNav();
-    System.out.println("File Read Time for " + Thread.currentThread().getName() + " -- " +
-        (DateTime.now().getMillis() - dt.getMillis()));
+//    System.out.println("File Read Time for " + Thread.currentThread().getName() + " -- " +
+//        (DateTime.now().getMillis() - dt.getMillis()));
     return vn;
   }
 
@@ -217,7 +220,7 @@ public class CashFlowHelper {
   }
 
   public static void setBankNameAsync(CashFlowResult result, CountDownLatch latch) throws Exception {
-    DateTime dt = DateTime.now();
+//    DateTime dt = DateTime.now();
     HttpGet getRequest = new HttpGet(BANK_SERVICE + result.getRouting());
     client.execute(getRequest, new FutureCallback<HttpResponse>() {
       public void completed(final HttpResponse execute) {
@@ -225,8 +228,8 @@ public class CashFlowHelper {
         try {
           bankData = mapper.readValue(execute.getEntity().getContent(), Map.class);
           result.setBankName(bankData.get(BANK_NAME_KEY));
-          System.out.println("Bank Srvc Time for " + Thread.currentThread().getName() + " -- " +
-          (DateTime.now().getMillis() - dt.getMillis()));
+//          System.out.println("Bank Srvc Time for " + Thread.currentThread().getName() + " -- " +
+//          (DateTime.now().getMillis() - dt.getMillis()));
           // execute.close();
         } catch (Exception e) {
           e.printStackTrace();

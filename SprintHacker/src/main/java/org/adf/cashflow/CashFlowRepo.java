@@ -26,6 +26,6 @@ public interface CashFlowRepo extends JpaRepository<CashFlow, String> {
 //  @Modifying
 //  @Query(value = "update hacker.cash_flow set bank_name = ?2, cash_flow=?1 where key = ?3", nativeQuery = true)
 //  void updateCashFlow(int cashFlow, String bankName, String key);
-  @Query(value = "select c.id,c.file from CashFlow c where c.id in :key")
+  @Query(value = "select new CashFlow(c.id,c.file) from CashFlow c where c.id in :key")
   List<CashFlow> findAllKeys(@Param("key")String[] key);
 }

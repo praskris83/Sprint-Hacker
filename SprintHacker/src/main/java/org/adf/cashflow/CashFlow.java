@@ -17,15 +17,27 @@ import javax.persistence.Table;
 public class CashFlow {
 
   private String id;
-  
+
+  public CashFlow() {
+    super();
+    // TODO Auto-generated constructor stub
+  }
+
   private String file;
-  
+
   private int cashFlow;
-  
+
   private String bankName;
 
+
+  public CashFlow(String id, String file) {
+    super();
+    this.id = id;
+    this.file = file;
+  }
+
   @Id
-  @Column(name = "`key`", nullable=false)
+  @Column(name = "`key`", nullable = false)
   public String getId() {
     return id;
   }
@@ -60,6 +72,6 @@ public class CashFlow {
   public void setBankName(String bankName) {
     this.bankName = bankName;
   }
-  
-  
+
+
 }
