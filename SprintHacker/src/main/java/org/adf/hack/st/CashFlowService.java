@@ -63,6 +63,7 @@ public class CashFlowService {
         @Override
         public void run() {
           dbHelper.save(cashflows);
+          System.out.println("Saved ");
           ex.shutdown();
 //           System.out.println("DB Save" + (DateTime.now().getMillis() - dt.getMillis()));
         }

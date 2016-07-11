@@ -56,7 +56,7 @@ public class CashFlowHelper {
 
   private static final String BANK_NAME_KEY = "bankName";
   
-  private static final String MOCK_FILE = "C:\\Users\\prasad\\github\\SprintHacker\\test5.xml";
+  private static final String MOCK_FILE = "C:\\Users\\prasad\\github\\SprintHacker\\dl10.xml";
 
   // static AlchemyHttp http;
 
@@ -137,7 +137,7 @@ public class CashFlowHelper {
       public void run() {
         try {
 //          DateTime dt = DateTime.now();
-          setXMLDetails(result, vn);
+          setXMLDetails(result, vn, cfEntity);
 //          System.out.println("XML  Pars Time for " + Thread.currentThread().getName() + " -- " +
 //          (DateTime.now().getMillis() - dt.getMillis()));
         } catch (Exception e) {
@@ -151,12 +151,14 @@ public class CashFlowHelper {
     ex.submit(task);
   }
 
-  protected static void setXMLDetails(CashFlowResult result, VTDNav vn)
+  protected static void setXMLDetails(CashFlowResult result, VTDNav vn, CashFlow cfEntity)
       throws PilotException, NavException {
 //    VTDNav vn = vn.getNav();
     vn.toElement(VTDNav.ROOT);
     AutoPilot ap = new AutoPilot(vn);
-    result.setCashFlow(getCashFlowVal(vn, ap));
+    int cashFlowVal = getCashFlowVal(vn, ap);
+    result.setCashFlow(cashFlowVal);
+    cfEntity.setCashFlow(cashFlowVal);
   }
 
   public static VTDNav read(CashFlow cfEntity) throws FileNotFoundException,
@@ -219,7 +221,7 @@ public class CashFlowHelper {
     return null;
   }
 
-  public static void setBankNameAsync(CashFlowResult result, CountDownLatch latch) throws Exception {
+  public static void setBankNameAsync(CashFlowResult result, CountDownLatch latch, CashFlow entity) throws Exception {
 //    DateTime dt = DateTime.now();
     HttpGet getRequest = new HttpGet(BANK_SERVICE + result.getRouting());
     client.execute(getRequest, new FutureCallback<HttpResponse>() {
@@ -227,7 +229,9 @@ public class CashFlowHelper {
         Map<String, String> bankData;
         try {
           bankData = mapper.readValue(execute.getEntity().getContent(), Map.class);
-          result.setBankName(bankData.get(BANK_NAME_KEY));
+          String bankName = bankData.get(BANK_NAME_KEY);
+          result.setBankName(bankName);
+          entity.setBankName(bankName);
 //          System.out.println("Bank Srvc Time for " + Thread.currentThread().getName() + " -- " +
 //          (DateTime.now().getMillis() - dt.getMillis()));
           // execute.close();
