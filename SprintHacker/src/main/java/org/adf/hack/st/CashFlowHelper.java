@@ -43,6 +43,8 @@ import com.ximpleware.ParseException;
 import com.ximpleware.PilotException;
 import com.ximpleware.VTDGen;
 import com.ximpleware.VTDNav;
+import com.ximpleware.XPathEvalException;
+import com.ximpleware.XPathParseException;
 
 /**
  * @author Prasad
@@ -152,7 +154,7 @@ public class CashFlowHelper {
   }
 
   protected static void setXMLDetails(CashFlowResult result, VTDNav vn, CashFlow cfEntity)
-      throws PilotException, NavException {
+      throws PilotException, NavException, XPathParseException, XPathEvalException {
 //    VTDNav vn = vn.getNav();
     vn.toElement(VTDNav.ROOT);
     AutoPilot ap = new AutoPilot(vn);
@@ -181,16 +183,15 @@ public class CashFlowHelper {
     return vn;
   }
 
-  public static int getCashFlowVal(VTDNav vn, AutoPilot ap) throws PilotException, NavException {
-    ap.selectElement("Amount");
+  public static int getCashFlowVal(VTDNav vn, AutoPilot ap) throws PilotException, NavException, XPathParseException, XPathEvalException {
+    ap.selectXPath("//TransactionSummary4/Amount");
     double cashFlow = 0d;
-    while (ap.iterate()) {
-      int t = vn.getText();
-      if (t != -1) {
-        String val = vn.toNormalizedString(t);
-        // System.out.println(" CAsh ==> " + val);
-        cashFlow = cashFlow + NumberUtils.toDouble(val);
-      }
+    int i=-1;
+    while((i=ap.evalXPath())!=-1){
+      long l = vn.getContentFragment();
+      String cash = vn.toString((int )l, (int)(l>>32));
+      cashFlow = cashFlow + NumberUtils.toDouble(cash);
+//      System.out.println(" -==> "+ cashFlow);
     }
     // System.out.println("Cash Flow Actual " + cashFlow);
     int amt = (int) Math.ceil(cashFlow);
